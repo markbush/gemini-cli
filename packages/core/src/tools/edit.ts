@@ -26,6 +26,7 @@ import { ensureCorrectEdit } from '../utils/editCorrector.js';
 import { DEFAULT_DIFF_OPTIONS } from './diffOptions.js';
 import { ReadFileTool } from './read-file.js';
 import { ModifiableTool, ModifyContext } from './modifiable-tool.js';
+import { MessageSenderType } from '../core/logger.js';
 import { isWithinRoot } from '../utils/fileUtils.js';
 
 /**
@@ -414,6 +415,14 @@ Expectation for required parameters:
           originalContent: editData.currentContent,
           newContent: editData.newContent,
         };
+      }
+
+      const logger = this.config.getLogger();
+      if (logger) {
+        await logger.logMessage(
+          MessageSenderType.FILE_CHANGE,
+          JSON.stringify({ ...params, diff: displayResult }),
+        );
       }
 
       const llmSuccessMessageParts = [

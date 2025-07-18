@@ -467,8 +467,9 @@ export const useGeminiStream = (
       stream: AsyncIterable<GeminiEvent>,
       userMessageTimestamp: number,
       signal: AbortSignal,
-    ): Promise<StreamProcessingStatus> => {
+    ): Promise<{ status: StreamProcessingStatus; fullResponse: string }> => {
       let geminiMessageBuffer = '';
+      let fullResponse = '';
       const toolCallRequests: ToolCallRequestInfo[] = [];
       for await (const event of stream) {
         switch (event.type) {
@@ -476,6 +477,7 @@ export const useGeminiStream = (
             setThought(event.value);
             break;
           case ServerGeminiEventType.Content:
+            fullResponse += event.value;
             geminiMessageBuffer = handleContentEvent(
               event.value,
               geminiMessageBuffer,
@@ -516,7 +518,7 @@ export const useGeminiStream = (
       if (toolCallRequests.length > 0) {
         scheduleToolCalls(toolCallRequests, signal);
       }
-      return StreamProcessingStatus.Completed;
+      return { status: StreamProcessingStatus.Completed, fullResponse };
     },
     [
       handleContentEvent,
@@ -582,14 +584,18 @@ export const useGeminiStream = (
           abortSignal,
           prompt_id!,
         );
-        const processingStatus = await processGeminiStreamEvents(
+        const { status, fullResponse } = await processGeminiStreamEvents(
           stream,
           userMessageTimestamp,
           abortSignal,
         );
 
-        if (processingStatus === StreamProcessingStatus.UserCancelled) {
+        if (status === StreamProcessingStatus.UserCancelled) {
           return;
+        }
+
+        if (fullResponse) {
+          void logger?.logMessage(MessageSenderType.MODEL, fullResponse);
         }
 
         if (pendingHistoryItemRef.current) {
@@ -635,6 +641,7 @@ export const useGeminiStream = (
       geminiClient,
       onAuthError,
       config,
+      logger,
       startNewPrompt,
       getPromptCount,
       handleLoopDetectedEvent,

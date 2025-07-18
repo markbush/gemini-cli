@@ -13,6 +13,10 @@ const LOG_FILE_NAME = 'logs.json';
 
 export enum MessageSenderType {
   USER = 'user',
+  MODEL = 'model',
+  COMMAND = 'command',
+  COMMAND_OUTPUT = 'command_output',
+  FILE_CHANGE = 'file_change',
 }
 
 export interface LogEntry {

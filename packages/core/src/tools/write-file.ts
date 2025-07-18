@@ -28,6 +28,7 @@ import {
 import { DEFAULT_DIFF_OPTIONS } from './diffOptions.js';
 import { ModifiableTool, ModifyContext } from './modifiable-tool.js';
 import { getSpecificMimeType, isWithinRoot } from '../utils/fileUtils.js';
+import { MessageSenderType } from '../core/logger.js';
 import {
   recordFileOperationMetric,
   FileOperation,
@@ -261,6 +262,14 @@ export class WriteFileTool
         'Written',
         DEFAULT_DIFF_OPTIONS,
       );
+
+      const logger = this.config.getLogger();
+      if (logger) {
+        await logger.logMessage(
+          MessageSenderType.FILE_CHANGE,
+          JSON.stringify({ ...params, diff: fileDiff }),
+        );
+      }
 
       const llmSuccessMessageParts = [
         isNewFile

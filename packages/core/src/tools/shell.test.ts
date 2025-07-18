@@ -410,6 +410,9 @@ describe('ShellTool Bug Reproduction', () => {
       getDebugMode: () => false,
       getGeminiClient: () => ({}) as GeminiClient,
       getTargetDir: () => '.',
+      getLogger: () => ({
+        logMessage: vi.fn(),
+      }),
       getSummarizeToolOutputConfig: () => ({
         [shellTool.name]: {},
       }),
@@ -440,6 +443,9 @@ describe('ShellTool Bug Reproduction', () => {
       getDebugMode: () => false,
       getGeminiClient: () => ({}) as GeminiClient,
       getTargetDir: () => '.',
+      getLogger: () => ({
+        logMessage: vi.fn(),
+      }),
       getSummarizeToolOutputConfig: () => ({}),
     } as unknown as Config;
     shellTool = new ShellTool(config);
@@ -466,6 +472,9 @@ describe('ShellTool Bug Reproduction', () => {
       getDebugMode: () => false,
       getGeminiClient: () => ({}) as GeminiClient,
       getTargetDir: () => '.',
+      getLogger: () => ({
+        logMessage: vi.fn(),
+      }),
       getSummarizeToolOutputConfig: () => ({
         [shellTool.name]: { tokenBudget: 1000 },
       }),
@@ -494,6 +503,9 @@ describe('ShellTool Bug Reproduction', () => {
       getDebugMode: () => false,
       getGeminiClient: () => ({}) as GeminiClient,
       getTargetDir: () => '.',
+      getLogger: () => ({
+        logMessage: vi.fn(),
+      }),
       getSummarizeToolOutputConfig: () => ({
         [shellTool.name]: {},
       }),

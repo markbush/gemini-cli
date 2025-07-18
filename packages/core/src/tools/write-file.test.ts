@@ -54,6 +54,9 @@ const mockConfigInternal = {
   getApprovalMode: vi.fn(() => ApprovalMode.DEFAULT),
   setApprovalMode: vi.fn(),
   getGeminiClient: vi.fn(), // Initialize as a plain mock function
+  getLogger: () => ({
+    logMessage: vi.fn(),
+  }),
   getApiKey: () => 'test-key',
   getModel: () => 'test-model',
   getSandbox: () => false,

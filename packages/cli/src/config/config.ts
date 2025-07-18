@@ -17,6 +17,7 @@ import {
   DEFAULT_GEMINI_EMBEDDING_MODEL,
   FileDiscoveryService,
   TelemetryTarget,
+  Logger,
   MCPServerConfig,
   IDE_SERVER_NAME,
 } from '@google/gemini-cli-core';
@@ -348,6 +349,9 @@ export async function loadCliConfig(
 
   const sandboxConfig = await loadSandboxConfig(settings, argv);
 
+  const sessionLogger = new Logger(sessionId);
+  await sessionLogger.initialize();
+
   return new Config({
     sessionId,
     embeddingModel: DEFAULT_GEMINI_EMBEDDING_MODEL,
@@ -408,6 +412,7 @@ export async function loadCliConfig(
       version: e.config.version,
     })),
     noBrowser: !!process.env.NO_BROWSER,
+    logger: sessionLogger,
     summarizeToolOutput: settings.summarizeToolOutput,
     ideMode,
   });

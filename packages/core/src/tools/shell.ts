@@ -29,6 +29,7 @@ export interface ShellToolParams {
 }
 import { spawn } from 'child_process';
 import { summarizeToolOutput } from '../utils/summarizer.js';
+import { MessageSenderType } from '../core/logger.js';
 
 const OUTPUT_UPDATE_INTERVAL_MS = 1000;
 
@@ -300,6 +301,11 @@ Process Group PGID: Process group started or \`(none)\``,
       };
     }
 
+    const logger = this.config.getLogger();
+    if (logger) {
+      await logger.logMessage(MessageSenderType.COMMAND, params.command);
+    }
+
     const isWindows = os.platform() === 'win32';
     const tempFileName = `shell_pgrep_${crypto
       .randomBytes(6)
@@ -466,6 +472,10 @@ Process Group PGID: Process group started or \`(none)\``,
         `Background PIDs: ${backgroundPIDs.length ? backgroundPIDs.join(', ') : '(none)'}`,
         `Process Group PGID: ${shell.pid ?? '(none)'}`,
       ].join('\n');
+    }
+
+    if (logger) {
+      await logger.logMessage(MessageSenderType.COMMAND_OUTPUT, llmContent);
     }
 
     let returnDisplayMessage = '';
